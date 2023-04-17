@@ -293,6 +293,37 @@ const store = createStore(rootReducer, applyMiddleware(logger))
 # logs are printed to the console
 ```
 
+# Payload
+- pass additional data
+
+```
+# in the component
+const [number, setNumber] = useState(1)
+return
+    <input type='text' value={number} onChange={e => setNumber(e.target.value)} />
+    <button onClick={() => props.buyCake(number)}> Buy Cake </button>
+
+mapDispatchToProps:
+    return{
+        buyCake: number => dispatch(buyCake(number))
+    }
+
+# cakeActions.js
+export const buyCake = (number=1) => {
+    return {
+        type: BUY_CAKE,
+        payload: number
+    }
+}
+
+# cakeReducer.js
+case BUY_CAKE:
+    numOfCakes: state.numOfCakes - action.payload
+```
+
+# Multiple Reducers
+(todo)
+
 # Redux-Dynamic-Modules
 - Group redux artifacts
 

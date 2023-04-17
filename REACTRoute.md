@@ -20,7 +20,7 @@ function app(){
         <BrowserRouter>
             <header>
                 <nav>
-                    <Link to = "/">Home<Link>
+                    <Link to = "/">Home</Link>
                     <NavLink to="about">About </NavLink>
                 </nav>
             </header>
