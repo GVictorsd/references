@@ -59,6 +59,32 @@ header nav a:active{
 }
 ```
 
+## Passing props via link and navlink
+```
+# for Link
+<Link to={{
+    pathname: '/home',
+    state: {name: 'from home page'}
+}}> abc </Link>
+
+# navLink
+<NavLink to={{
+    pathname: '/home',
+    state: {title: 'from home page'}
+}}> abc </NavLink>
+
+# accessing in the component using hooks
+import {useLocation} from 'react-router-dom'
+function App(){
+    let location = useLocation();
+    console.log(location)
+    return...
+}
+
+# for class comp
+console.log(this.props.location)
+```
+
 ## New way
 ```
 import {

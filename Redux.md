@@ -384,3 +384,98 @@ const store = createStore(
     composeWithDevTools()
 )
 ```
+
+# Async Actions 
+- fetch a list of users from the endpoint and store it in the redux store
+
+```
+initState = {
+    loading: true,
+    data: [],
+    error: ''
+}
+
+actions:
+FETCH_USERS_REQUEST - fetch list of users
+FETCH_USERS_SUCCESS - fetched successfully
+FETCH_USERS_FAILURE - fetch failed
+
+Reducer:
+case FETCH_USERS_REQUEST:
+    loding: true
+case FETCH_USERS_SUCCESS:
+    loading: false
+    users: action.payload(data from api)
+case FETCH_USERS_FAILURE:
+    loading: false
+    error: action.payload(error from api)
+```
+
+### libraries
+- Axios : to make api requests
+- redux Thunk: to define async action creators 
+```
+npm install axios redux-thunk
+```
+
+- apply thunk to redux store
+```
+# store.js
+import thunk from 'redux-thunk'
+
+const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(logger, thunk)))
+```
+
+- create async action creator
+```
+# userActions.js(redux actions file)
+import axios from 'axios'
+
+export const fetchusersRequest()
+export const fetchusersSuccess()
+export const fetchusersFailure()
+
+export const fetchUsers = () => {
+    // uses thunk and returns another function unlike other actions that return an object
+
+    return (dispatch) => {
+        dispatch(fetchusersRequest) // sets loading to true
+        axios.get(url)
+            .then(response => {
+                const users = response.data
+                dispatch(fetchUsersSuccess(users))
+            })
+            .catch(error => {
+                const errormsg = error.message
+                dispatch(fetchUsersFailure(errormsg))
+            })
+    }
+}
+```
+
+- Subscribe to the redux Store in the component and display the data
+```
+# component.js
+
+import {useEffect} from 'redux'
+import {connect} from 'redux-store
+import {fetchUsers} from '../redux'
+
+function component({userData, fetchUsers}){
+    useEffect(() => {
+        fetchUsers()
+    }, [])
+    return userData.loading ? (
+        <h2> loading </h2>
+    ): userData.error ? (
+        <h2> {userData.error} </h2>
+    ):(
+        <h2>{userData.users}</h2>
+    )
+}
+
+mapStateToProps(...)
+mapDispatchToProps(...)
+
+export default connect(...){...}
+```
