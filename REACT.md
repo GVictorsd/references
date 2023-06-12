@@ -15,7 +15,8 @@ Two types
 
 - Stateless functional component
 ```
-- javascript functions
+- javascript functions- eg - header, sidenav, maincontent, footer, root(App)(contains all other components)
+
 
 function welcome(props){
     return <h1> Hello, (props.name)</h1>
