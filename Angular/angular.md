@@ -200,3 +200,309 @@ class{
 instead of [property]="" used for binding we can use
 bind-property=""
 ```
+
+## class Binding
+```
+<h2 class="text-success">
+
+# class binding
+public successClass = "text-success"
+<h2 [class]="successClass" >
+
+# when using literal class name and class binding, literal class is ignored
+# here only successClass is applied
+<h2 class="text-error" [class]="successClass" >
+
+# conditionally applying class names
+# here text-danger is css class name and hasError is a property of the class
+public hasError = true/false
+<h2 [class.text-danger]="hasError">
+
+# conditionally applying multiple classnames (ngClass)
+public hasError = false;
+public isSpecial = true;
+public messageClasses = {
+  "text-success": !this.hasError,
+  "text-danger": this.hasError,
+  "text-special": this.isSpecial
+}
+<h2 [ngClass]="messageClasses"></h2>
+```
+
+## Style Binding
+```
+<h2 [style.color]="orange">
+
+# conditional styling
+<h2 [style.color]="hasError ? 'red' : 'orange'">
+
+public highlightColor = "orange";
+<h2 [style.color]="highlightColor">
+
+# multiple styles(ngStyle)
+public titleStyles = {
+  color: "blue",
+  fontStyle: "italic"
+}
+<h2 [ngStyle]="titleStyles">
+```
+
+## Event Binding
+class --[Data Binding]--> Template
+Template --[Event Binding]--> Class
+
+```
+<element (event)="eventHandler()">...</element>
+
+<button (click)="onClick()">
+class method:
+onClick(){
+  ...
+}
+
+# getting info about the event($event)
+<button (click)="onClick($event)">
+
+# without separate event handler method
+<button (click)="<js to be executed>">
+<button (click)="greeting = 'hello'">
+for public greeting = ''
+```
+
+## Template reference variables
+Reference variable is used to refer to an html element from another html element
+variable specified by `#variableName`
+```
+# log the content of input to console when button clicked
+<input #myInput type="text>
+<button (click)="logMessage(myInput.value)">Log</button>
+
+logMessage(value) {
+  console.log(value)
+}
+```
+
+## Two way binding
+keeps view and model in sync
+update the dom whenever a property changes and viceversa
+
+```
+<input [(ngModel)]="name" type="text">
+{{name}}
+
+public name = "";
+
+# here value "name" flows from view (input) to model and then to view ({{name}})
+
+note: forms module needs to be imported in app.module.ts file
+import {formsModule} from '@angular/forms'
+# in imports array
+imports: [
+  ...,
+  FormsModule
+]
+```
+
+## Structural Directives
+## ngIf
+- ngIf
+- ngSwitch
+- ngFor
+
+```
+<h2 *ngIf="true/false">
+
+<h2 *ngIf="displayName">
+public displayName = true/false;
+
+# if-else
+<h2 *ngIf="displayName; else elseBlock">
+
+<ng-template #elseBlock>
+  <h2> show if displayName is false
+</ng-template>
+
+# alternate syntax
+<div *ngIf="displayName; then thenBlock; else elseBlock"></div>
+
+<ng-template #thenBlock>
+  <h2>...
+</ng-template>
+
+<ng-template #elseBlock>
+  <h2>...
+</ng-template>
+```
+
+## ngSwitch
+```
+<div [ngSwitch]="color">
+  <div *ngSwitchCase="'red'">you picked red</div>
+  <div *ngSwitchCase="'blue'">you picked blue</div>
+  <div *ngSwitchCase="'green'">you picked green</div>
+  <div *ngSwitchDefault>Default</div>
+</div>
+
+public color = 'red';
+```
+
+## ngFor
+
+```
+<div *ngFor="let color of colors">
+  <h2>{{color}}</h2>
+</div>
+
+public colors = ['red', 'blue', "green", "yellow"];
+
+# get indexes
+<div *ngFor="let color of colors; index as i">
+
+# indicates if an element is first element or not
+<div *ngFor="let color of colors; first as f">
+<div *ngFor="let color of colors; last as l">
+<div *ngFor="let color of colors; odd as o">
+<div *ngFor="let color of colors; even as e">
+```
+
+## Component Interaction
+Interaction between child and parent components
+- Input and output decorators: @Input[], @Output[]
+
+```
+#### from parent to child
+## app.component
+<app-test [parentData]="name">
+
+## test.component
+import {Input} from '@angular/core'
+# use same name as parent
+@Input() public parentData;
+# use a different name
+@Input('parentData') public name;
+
+
+#### from child to parent
+- using events
+### test component
+import {EventEmitter, Output} from '@angular/core'
+<button (click)="fireEvent()">
+
+@Output() public childEvent = new EventEmitter();
+
+fireEvent(){
+  this.childEvent.emit('Message to parent')
+}
+
+### app.component
+<app-test (childEvent)="message=$event">
+public message = ""
+```
+
+## Pipes
+- allow transforming data before displaying them in view
+```
+## FOR STRING TYPE
+# convert to lowercase
+<h2>{{ name | lowercase }}</h2>
+<h2>{{ name | uppercase }}</h2>
+# capitalize every first letter of the word
+<h2>{{ name | titlecase }}</h2>
+# string starting from index 3
+<h2>{{ name | slice:3}}</h2>
+# starting at 3 not including 5
+<h2>{{ name | slice:3:5}}</h2>
+# display json
+<h2>{{ person | json}}</h2>
+
+## FOR NUMBERS
+# <minimum no of integer digits>.<min no of decimal digits>-<max no of decimal digits>
+<h2>{{5.678 | number: '1.2-3'}}
+
+<h2>{{0.25 | percent}}</h2>
+<h2>{{0.25 | currency}}</h2>
+# currency = great Britin Pounds
+<h2>{{0.25 | currency:'GBP'}}</h2>
+
+## FOR DATES
+<h2>{{date}}</date>
+<h2>{{date | date: 'short'}}</date>
+<h2>{{date | date: 'shortDate'}}</date>
+<h2>{{date | date: 'shortTime'}}</date>
+
+public date = new Date();
+public name = "name";
+```
+
+## Services
+A class with a specific purpose
+
+Used when need to:
+- Share date
+- Implement app logic without view
+- External interaction
+naming convention: .service.ts
+
+## Dependency Injection
+DI is a coding pattern in which a class gets its dependencies from external sources rather than creating them itself
+
+```
+# this method is not flexiable because is we change engine class to accept a arg, we need to change the car constructor as well
+class Engine()
+class Wheels()
+class Car(){
+  constructor(){
+    engine = new Engine()
+    wheel = new Wheel()
+  }
+}
+
+# with dependency injection
+var engine = new Engine()
+var wheel = new Wheel()
+var car = new Car(engine, wheel)
+# above approch fails when there are many dependencies which inturn can have more dependencies
+# angular dependency framework is used to manage them
+```
+## angular dependency framework
+- Injector: Register all the dependencies
+`Injector[ Engine, tires, depA, depB, ...] => Car`
+
+### FOR EMPLOYEE SERVICE
+- Define the EmployeeService class
+- Register with Injector
+- Declare as dependency in required classes that need the service
+
+## Using a Service
+```
+# generate service template
+ng <generate(g)> <service(s)> <name>
+ng g s employeeService
+```
+- add a method to employeeService class that returns the required data
+```
+## employee.service.ts
+getEmployeeService{
+  return [...]
+}
+```
+- register the service to angular injector
+Angular injector is hearchial, ie, all the modules below the component  in which the service is registered will be able to use the service
+
+```
+## app.module.ts
+import EmployeeService;
+@NgModule({
+  ...
+  providers: [EmployeeService]
+})
+```
+- Mention the dependency in the required module
+```
+class{
+  constructor(private _employeeService: EmployeeService){}
+  ngOnInit(){
+    this.employees = this._employeeService.getEmployees();
+  }
+}
+```
